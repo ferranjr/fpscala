@@ -35,6 +35,14 @@ object List {
     else Cons(as.head, apply(as.tail :_*) )
   }
 
+
+  def append[A](a1: List[A], a2: List[A]): List[A] =
+    a1 match {
+      case Nil => a2
+      case Cons(x, xs) => Cons(x, append(xs, a2))
+    }
+
+
   /**
    * Exercise 3.2
    * Implement the function tail for removing the first element of a List.
@@ -64,11 +72,39 @@ object List {
    * this function takes time proportional only to the number of elements being dropped—we don’t need
    * to make a copy of the entire List.
    */
-  def drop[A](l: List[A], n: Int): List[A] =
+  @annotation.tailrec
+  def drop[A](l: List[A], n: Int): List[A] = {
     l match {
       case Nil => Nil
-      case ys@Cons(_,_) if n == 0 => ys
-      case Cons(x,xs) => drop(xs, n-1)
+      case ys@Cons(_, _) if n == 0 => ys
+      case Cons(x, xs) => drop(xs, n - 1)
+    }
+  }
+
+  /**
+   * Exercise 3.5
+   * Implement dropWhile, which removes elements from the List prefix as long as they match a predicate.
+   */
+  @annotation.tailrec
+  def dropWhile[A](l: List[A], f: A => Boolean): List[A] =
+    l match {
+      case Nil => Nil
+      case Cons(x, xs) if f(x) => xs
+      case Cons(x,xs) => dropWhile(xs,f)
+    }
+
+
+  /**
+   * Exercise 3.6
+   * Not everything works out so nicely. Implement a function, init, that returns a List consisting of all
+   * but the last element of a List. So, given List(1,2,3,4), init will return List(1,2,3).
+   * Why can’t this function be implemented in constant time like tail?
+   */
+  def init[A](l: List[A]): List[A] =
+    l match {
+      case Nil => Nil
+      case Cons(x, Cons(y, Nil)) => Cons(x, Nil)
+      case Cons(x, xs) => Cons(x, init(xs))
     }
 
 }

@@ -13,6 +13,8 @@ class FunctionalDataStructuresSpecs extends Specification {
       List tail works $e32
       List set Head works $e33
       List drop works $e34
+      List dropWhile works $e35
+      List init works $e36
 
     """
 
@@ -31,4 +33,9 @@ class FunctionalDataStructuresSpecs extends Specification {
   // Exercise 3.4
   def e34 = List.drop(List(1,2,3,4,5), 3) must equalTo(List(4,5))
 
+  // Exercise 3.5
+  def e35 = List.dropWhile(List("foo","bar","baz","foobar"), (x:String) => x == "baz" ) must equalTo(List("foobar"))
+
+  // Exercise 3.6
+  def e36 = List.init(List('a', 'b', 'c', 'd')) must equalTo(List('a', 'b', 'c'))
 }
