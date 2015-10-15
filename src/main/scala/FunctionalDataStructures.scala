@@ -43,6 +43,14 @@ object List {
     }
 
 
+  def foldRight[A, B](as: List[A], z:B)(f: (A, B) => B):B =
+    as match {
+      case Nil => z
+      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+    }
+
+
+
   /**
    * Exercise 3.2
    * Implement the function tail for removing the first element of a List.
@@ -76,7 +84,7 @@ object List {
   def drop[A](l: List[A], n: Int): List[A] = {
     l match {
       case Nil => Nil
-      case ys@Cons(_, _) if n == 0 => ys
+      case ys if n <= 0 => ys
       case Cons(x, xs) => drop(xs, n - 1)
     }
   }
@@ -106,5 +114,44 @@ object List {
       case Cons(x, Cons(y, Nil)) => Cons(x, Nil)
       case Cons(x, xs) => Cons(x, init(xs))
     }
+
+  /**
+   * Exercise 3.7
+   * Can product, implemented using foldRight, immediately halt the recursion and return 0.0 if it encounters
+   * a 0.0? Why or why not? Consider how any short-circuiting might work if you call foldRight with a large list.
+   * This is a deeper question that we’ll return to in chapter 5.
+   */
+  def product2(floats: List[Float]) =
+    List.foldRight(floats, 1.0)(_ * _)
+
+  /**
+   * Exercise 3.9
+   * Compute the length of a list using foldRight
+   */
+  def length[A](as: List[A]): Int =
+    List.foldRight(as, 0)( (a, acc) => 1 + acc )
+
+  /**
+   * Exercise 3.10
+   * Our implementation of foldRight is not tail-recursive and will result in a StackOverflowError for large lists
+   * (we say it’s not stack-safe). Convince yourself that this is the case, and then write another general
+   * list-recursion function, foldLeft, that is tail-recursive, using the techniques we discussed in the previous
+   * chapter. Here is its signature:
+   */
+  @annotation.tailrec
+  def foldLeft[A,B](as: List[A], z: B)(f: (B, A) => B): B =
+    as match {
+      case Nil => z
+      case Cons(h, tail) => List.foldLeft(tail, f(z,h))(f)
+    }
+
+  /**
+   * Exercise 3.11
+   * Write sum, product, and a function to compute the length of a list using foldLeft.
+   */
+  def sum2(as: List[Int]):Int = List.foldLeft(as, 0)(_ + _)
+  def product3(as: List[Float]):Float = List.foldLeft(as, 1f)((acc, a) => acc * a)
+  def length2[A](as: List[A]):Int = List.foldLeft(as, 0)((acc, _) => acc + 1)
+
 
 }
