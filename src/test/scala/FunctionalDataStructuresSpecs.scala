@@ -6,21 +6,23 @@ class FunctionalDataStructuresSpecs extends Specification {
 
   def is = s2"""
 
-  Functional Data Structures Specs
+    Functional Data Structures Specs
 
-    List sum works $sumTest
-    List product works $prodTest
-    List tail works $e32
-    List set Head works $e33
-    List drop works $e34
-    List dropWhile works $e35
-    List init works $e36
-    List product with foldRight works $e37
-    List length with foldRight works $e39
-    List sum with foldLeft works $e311_1
-    List product with foldLeft works $e311_2
-    List length with foldLeft works $e311_3
-    """
+      List sum works $sumTest
+      List product works $prodTest
+      List tail works $e32
+      List set Head works $e33
+      List drop works $e34
+      List dropWhile works $e35
+      List init works $e36
+      List product with foldRight works $e37
+      List length with foldRight works $e39
+      List sum with foldLeft works $e311_1
+      List product with foldLeft works $e311_2
+      List length with foldLeft works $e311_3
+      List reverse with fold works $e311_4
+
+  """
 
 
   // Basic list operations
@@ -53,4 +55,7 @@ class FunctionalDataStructuresSpecs extends Specification {
   def e311_1 = List.sum2(List(1,2,3,4)) must equalTo(10)
   def e311_2 = List.product3(List(1,2,3,4)) must equalTo(24)
   def e311_3 = List.length2(List(1,2,3,4,5)) must equalTo(5)
+
+  // Exercise 3.12
+  def e311_4 = List.reverse(List(1,2,3,4,5)) must equalTo(List(5,4,3,2,1))
 }

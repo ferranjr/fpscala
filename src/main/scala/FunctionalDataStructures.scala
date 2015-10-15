@@ -154,4 +154,28 @@ object List {
   def length2[A](as: List[A]):Int = List.foldLeft(as, 0)((acc, _) => acc + 1)
 
 
+  /**
+   * Exercise 3.12
+   * Write a function that returns the reverse of a list (given List(1,2,3)
+   * it returns List(3,2,1)). See if you can write it using a fold.
+   */
+  def reverse[A](as: List[A]) =
+    List.foldLeft(as, List[A]())( (acc, a) => Cons(a,acc))
+
+
+  /**
+   * Exercise 3.13
+   * Hard: Can you write foldLeft in terms of foldRight? How about the other way around?
+   * Implementing foldRight via foldLeft is useful because it lets us implement foldRight
+   * tail-recursively, which means it works even for large lists without overflowing the
+   * stack.
+   */
+  def foldRight2[A,B](as: List[A], z: B)(f: (A, B) => B): B =
+    List.foldLeft(reverse(as),z)((a,b) => f(b,a))
+
+  def foldLeft2[A,B](as: List[A], z: B)(f: (B,A) => B ):B =
+    List.foldRight(as, (b:B) => b)((a,g) => b => g(f(b,a)))(z)
+
+
+
 }
