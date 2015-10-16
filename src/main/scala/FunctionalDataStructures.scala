@@ -176,6 +176,55 @@ object List {
   def foldLeft2[A,B](as: List[A], z: B)(f: (B,A) => B ):B =
     List.foldRight(as, (b:B) => b)((a,g) => b => g(f(b,a)))(z)
 
+  /**
+   * Exercise 3.14
+   * Implement append in terms of either foldLeft or foldRight
+   */
+  def append2[A](l: List[A], r: List[A]): List[A] =
+    List.foldRight(l,r)(Cons(_,_))
 
+  /**
+   * Exercise 3.15
+   * Hard: Write a function that concatenates a list of lists into a single list. Its
+   * runtime should be linear in the total length of all lists. Try to use functions we
+   * have already defined.
+   */
+  def concat[A](ls: List[List[A]]):List[A] =
+    List.foldRight(ls,Nil:List[A])(append)
 
+  /**
+   * Exercise 3.16
+   * Write a function that transforms a list of integers by adding 1 to each element
+   * (Reminder: this should be a pure function that returns a new List!)
+   */
+  def addOne(l: List[Int]):List[Int] =
+    List.foldRight(l, List[Int]())((a,b) => Cons(a+1, b))
+
+  /**
+   * Exercise 3.17
+   * Write a function that turns each value in a List[Double] into a String. You can use
+   * the expression d.toString to convert some d: Double to a String.
+   */
+  def toStrings(l: List[Double]):List[String] =
+    List.foldRight(l, List[String]())((a,b) => Cons(a.toString, b))
+
+  /**
+   * Exercise 3.18
+   * Write a function map that generalizes modifying each element in a list while maintaining
+   * the structure of the list.
+   * Here is its signature:[12] 12 In the standard library, map and flatMap are methods of List.
+   */
+  def map[A,B](as: List[A])(f: A => B): List[B] =
+    List.foldRight(as, List[B]())((a,b) => Cons(f(a), b))
+
+  /**
+   * Exercise 3.19
+   * Write a function filter that removes elements from a list unless they satisfy a given
+   * predicate. Use it to remove all odd numbers from a List[Int].
+   */
+  def filter[A](as: List[A])(f: A => Boolean): List[A] =
+    List.foldRight(as, Nil:List[A]){ (a,b) =>
+      if(f(a)) Cons(a,b)
+      else b
+    }
 }

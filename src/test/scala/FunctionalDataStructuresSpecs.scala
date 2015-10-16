@@ -20,7 +20,13 @@ class FunctionalDataStructuresSpecs extends Specification {
       List sum with foldLeft works $e311_1
       List product with foldLeft works $e311_2
       List length with foldLeft works $e311_3
-      List reverse with fold works $e311_4
+      List reverse with fold works $e312
+      List append with fold works $e314
+      List concat with fold works $e315
+      List addOne works $e316
+      List tooStrings works $e317
+      List map works $e318
+      List filter works $e319
 
   """
 
@@ -57,5 +63,23 @@ class FunctionalDataStructuresSpecs extends Specification {
   def e311_3 = List.length2(List(1,2,3,4,5)) must equalTo(5)
 
   // Exercise 3.12
-  def e311_4 = List.reverse(List(1,2,3,4,5)) must equalTo(List(5,4,3,2,1))
+  def e312 = List.reverse(List(1,2,3,4,5)) must equalTo(List(5,4,3,2,1))
+
+  // Exercise 3.14
+  def e314 = List.append2(List(1,2,3), List(4,5,6,7)) must equalTo(List(1,2,3,4,5,6,7))
+
+  // Exercise 3.15
+  def e315 = List.concat(List(List(1,2,3),List(4,5,6),List(7))) must equalTo(List(1,2,3,4,5,6,7))
+
+  // Exercise 3.16
+  def e316 = List.addOne(List(1,2,3,4,5)) must equalTo(List(2,3,4,5,6))
+
+  // Exercise 3.17
+  def e317 = List.toStrings(List(1,2,3,4,5)) must equalTo(List("1.0","2.0","3.0","4.0","5.0"))
+
+  // Exercise 3.18
+  def e318 = List.map(List(1,2,3))(_ + 1) must equalTo(List(2,3,4))
+
+  // Exercise 3.19
+  def e319 = List.filter(List(1,2,3,4,5,6,7,8))( _ % 2 == 0 ) must equalTo(List(2,4,6,8))
 }
