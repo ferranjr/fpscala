@@ -1,8 +1,9 @@
+package FunctionalDataStructures
+
 import org.specs2._
 
-class FunctionalDataStructuresSpecs extends Specification {
 
-  import FunctionalDataStructures.List
+class ListSpecs extends Specification {
 
   def is = s2"""
 
@@ -32,6 +33,8 @@ class FunctionalDataStructuresSpecs extends Specification {
       List filter via flatMap works $e321
       List addPariwise works $e322
       List zipWith works $e323
+      List startsWith works $e324h
+      List hasSubsequence works $e324
 
   """
 
@@ -101,6 +104,10 @@ class FunctionalDataStructuresSpecs extends Specification {
   // Exercise 3.23
   def e323 = List.zipWith(List(1,2,3), List(4,5,6))(_+_) must equalTo(List(5,7,9))
 
+  // Exercise 3.24
+  def e324 = List.hasSubsequence(List(1,2,3,4,5,6), List(3,4,5)) must equalTo(true)
+  // helper 3.24
+  def e324h = List.startsWith(List(1,2,3,4,5), List(1,2,3)) must equalTo(true)
 
 
 }

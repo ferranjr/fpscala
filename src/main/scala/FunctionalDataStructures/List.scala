@@ -1,6 +1,5 @@
 package FunctionalDataStructures
 
-
 /**
  * Creating a List
  */
@@ -281,5 +280,29 @@ object List {
         Cons(f(h1, h2), zipWith(tail1, tail2)(f))
     }
 
+  /**
+   * Exercise 3.24
+   * Hard: As an example, implement hasSubsequence for checking whether a List contains another List as a
+   * subsequence. For instance, List(1,2,3,4) would have List(1,2), List(2,3), and List(4) as subsequences,
+   * among others. You may have some difficulty finding a concise purely functional implementation that is
+   * also efficient. That’s okay. Implement the function however comes most naturally. We’ll return to this
+   * implementation in chapter 5 and hopefully improve on it.
+   * Note: Any two values x and y can be compared for equality in Scala using the expression x == y.
+   */
+
+  def startsWith[A](l: List[A], prefix: List[A]): Boolean =
+    (l, prefix) match {
+      case (_, Nil) => true
+      case (Cons(h1, t1), Cons(h2, t2)) if h1 == h2 => startsWith(t1,t2)
+      case _ => false
+    }
+
+
+  def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean =
+    sup match {
+      case Nil => sub == Nil
+      case _ if startsWith(sup, sub)=> true
+      case Cons(h, tail) => hasSubsequence(tail, sub)
+    }
 
 }
