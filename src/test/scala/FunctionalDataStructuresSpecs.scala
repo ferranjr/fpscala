@@ -25,8 +25,13 @@ class FunctionalDataStructuresSpecs extends Specification {
       List concat with fold works $e315
       List addOne works $e316
       List tooStrings works $e317
-      List map works $e318
+      List map works $e318_1
+      List map stack safe works $e318_2
       List filter works $e319
+      List flatMap works $e320
+      List filter via flatMap works $e321
+      List addPariwise works $e322
+      List zipWith works $e323
 
   """
 
@@ -78,8 +83,24 @@ class FunctionalDataStructuresSpecs extends Specification {
   def e317 = List.toStrings(List(1,2,3,4,5)) must equalTo(List("1.0","2.0","3.0","4.0","5.0"))
 
   // Exercise 3.18
-  def e318 = List.map(List(1,2,3))(_ + 1) must equalTo(List(2,3,4))
+  def e318_1 = List.map(List(1,2,3))(_ + 1) must equalTo(List(2,3,4))
+  def e318_2 = List.map_2(List(1,2,3))(_ + 1) must equalTo(List(2,3,4))
 
   // Exercise 3.19
   def e319 = List.filter(List(1,2,3,4,5,6,7,8))( _ % 2 == 0 ) must equalTo(List(2,4,6,8))
+
+  // Exercise 3.20
+  def e320 = List.flatMap(List(1,2,3))(i => List(i,i)) must equalTo(List(1,1,2,2,3,3))
+
+  // Exercise 3.21
+  def e321 = List.filterViaFlatMap(List(1,2,3,4,5,6,7,8))( _ % 2 == 0 ) must equalTo(List(2,4,6,8))
+
+  // Exercise 3.22
+  def e322 = List.addPairwise(List(1,2,3), List(4,5,6)) must equalTo(List(5,7,9))
+
+  // Exercise 3.23
+  def e323 = List.zipWith(List(1,2,3), List(4,5,6))(_+_) must equalTo(List(5,7,9))
+
+
+
 }

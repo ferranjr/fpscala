@@ -214,8 +214,15 @@ object List {
    * the structure of the list.
    * Here is its signature:[12] 12 In the standard library, map and flatMap are methods of List.
    */
+
+  // Implementation straight forward but not stack safe
   def map[A,B](as: List[A])(f: A => B): List[B] =
     List.foldRight(as, List[B]())((a,b) => Cons(f(a), b))
+
+  // Implementing based on the stack safe foldRight
+  def map_2[A,B](as: List[A])(f: A => B): List[B] =
+    List.foldRight2(as, List[B]())((a,b) => Cons(f(a), b))
+
 
   /**
    * Exercise 3.19
@@ -227,4 +234,52 @@ object List {
       if(f(a)) Cons(a,b)
       else b
     }
+
+  /**
+   * Exercise 3.20
+   * Write a function flatMap that works like map except that the function given will return a list
+   * instead of a single result, and that list should be inserted into the final resulting list.
+   * For instance, flatMap(List(1,2,3))(i => List(i,i)) should result in List(1,1,2,2,3,3).
+   */
+  def flatMap[A,B](as: List[A])(f: A => List[B]): List[B] =
+    List.foldRight2(as, List[B]())((a,acc) => List.append(f(a), acc))
+//    List.concat(map(as)(f))
+
+  /**
+   * Exercise 3.21
+   * Use flatMap to implement filter
+   */
+  def filterViaFlatMap[A](as: List[A])(f: A => Boolean): List[A] =
+    List.flatMap(as){ a =>
+      if(f(a)) List(a)
+      else Nil
+    }
+
+  /**
+   * Exercise 3.22
+   * Write a function that accepts two lists and constructs a new list by adding corresponding elements.
+   * For example, List(1,2,3) and List(4,5,6) become List(5,7,9).
+   */
+  def addPairwise(as: List[Int], bs: List[Int]):List[Int] =
+    (as,bs) match {
+      case (Nil, _) => Nil
+      case (_, Nil) => Nil
+      case (Cons(h1, tail1), Cons(h2, tail2)) =>
+        Cons(h1 + h2, addPairwise(tail1, tail2))
+    }
+
+  /**
+   * Exercise 3.23
+   * Generalize the function you just wrote so that it’s not specific to integers or addition.
+   * Name your generalized function zipWith.
+   */
+  def zipWith[A, B, C](as: List[A], bs: List[B])(f:(A, B) => C):List[C] =
+    (as, bs) match {
+      case (Nil, _) => Nil
+      case (_, Nil) => Nil
+      case (Cons(h1, tail1), Cons(h2, tail2)) =>
+        Cons(f(h1, h2), zipWith(tail1, tail2)(f))
+    }
+
+
 }
