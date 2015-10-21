@@ -101,6 +101,28 @@ sealed trait Stream[+A]{
     foldRight(None:Option[A])(
       (a, _) => Some(a)
     )
+
+  /**
+   * Exercise 5.7
+   * Implement map, filter, append, and flatMap using foldRight.
+   * The append method should be non-strict in its argument.
+   */
+  def map[B](f: A => B): Stream[B] =
+    foldRight(Stream[B]())((h,t) => Stream.cons(f(h), t))
+
+  def filter(f: A => Boolean): Stream[A] =
+    foldRight(Stream[A]()){ (h,t) =>
+      if(f(h)) Stream.cons(h, t)
+      else     t
+    }
+
+  def append[B>:A](s: => Stream[B]): Stream[B] =
+    foldRight(s){ (h,t) => Stream.cons(h, t) }
+
+  def flatMap[B](f: A => Stream[B]): Stream[B] =
+    foldRight(Stream[B]()){ (h,t) =>
+      f(h) append t
+    }
 }
 case object Empty extends Stream[Nothing]
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
