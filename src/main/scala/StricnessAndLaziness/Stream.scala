@@ -123,6 +123,10 @@ sealed trait Stream[+A]{
     foldRight(Stream[B]()){ (h,t) =>
       f(h) append t
     }
+
+  def find(p: A => Boolean): Option[A] =
+    filter(p).headOption
+
 }
 case object Empty extends Stream[Nothing]
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
@@ -142,4 +146,38 @@ object Stream {
     if(as.isEmpty) Empty
     else cons(as.head, apply(as.tail: _*))
 
+
+  /**
+   * Exercise 5.8
+   * Generalize ones slightly to the function constant, which returns an infinite Stream
+   * of a given value.
+   */
+  def constant[A](a: A): Stream[A] = {
+    lazy val tail: Stream[A] = Cons(() => a, () => tail)
+    tail
+  }
+
+  /**
+   * Exercise 5.9
+   * Write a function that generates an infinite stream of integers, starting from n,
+   * then n + 1, n + 2, and so on.
+   * In Scala, the Int type is a 32-bit signed integer, so this stream will switch from positive to
+   * negative values at some point, and will repeat itself after about four billion elements.
+   */
+  def from(n: Int): Stream[Int] = {
+    Cons(() => n, () => from(n + 1))
+  }
+
+  /**
+   * Exercise 5.10
+   * Write a function fibs that generates the infinite stream of
+   * Fibonacci numbers: 0, 1, 1, 2, 3, 5, 8, and so on.
+   */
+  def fibs: Stream[Int] = {
+    def go(f0: Int, f1: Int): Stream[Int] = {
+      Cons(() => f0, () => go(f1, f0 + f1))
+    }
+
+    go(0, 1)
+  }
 }
