@@ -127,6 +127,49 @@ sealed trait Stream[+A]{
   def find(p: A => Boolean): Option[A] =
     filter(p).headOption
 
+
+  /**
+   * Exercise 5.13
+   * Use unfold to implement map, take, takeWhile, zipWith (as in chapter 3), and zipAll.
+   * The zipAll function should continue the traversal as long as either stream has more elements—it
+   * uses Option to indicate whether each stream has been exhausted.
+   */
+  def mapWithUnfold[B](f: A => B): Stream[B] =
+    Stream.unfold(this){
+      case Cons(h, t) => Some(f(h()), t())
+      case _ => None
+    }
+
+  def takeWithUnfold(n: Int): Stream[A] =
+    Stream.unfold((this, n)){
+      case (Cons(h, t),1) => Some((h(), (Stream.empty, 0)))
+      case (Cons(h, t),n0) if n0 > 1 => Some((h(), (t(),n0-1)))
+      case _ => None
+    }
+
+  def takeWhileWithUnfold(p: A => Boolean): Stream[A] =
+    Stream.unfold(this){
+      case Cons(h, t) if p(h()) => Some((h(), t()))
+      case _ => None
+    }
+
+  def zipWithWithUnfold[B, C](s2: Stream[B])(f:(A, B) => C):Stream[C] =
+    Stream.unfold((this, s2)){
+      case (Cons(h1, t1), Cons(h2, t2)) =>
+        Some((f(h1(), h2()),(t1(), t2())))
+      case _ => None
+    }
+
+  def zipAll[B](s2: Stream[B]): Stream[(Option[A],Option[B])] =
+    Stream.unfold(this, s2){
+      case (Cons(h1, t1), Cons(h2, t2)) =>
+        Some((Some(h1()), Some(h2())), (t1(), t2()))
+      case (Cons(h1, t1), Empty) =>
+        Some((Some(h1()), None), (t1(), Stream.empty))
+      case (Empty, Cons(h2, t2)) =>
+        Some((None, Some(h2())), (Stream.empty, t2()))
+      case _ => None
+    }
 }
 case object Empty extends Stream[Nothing]
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
@@ -135,15 +178,15 @@ case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
 object Stream {
 
   def cons[A](h: => A, t: => Stream[A]):Stream[A] = {
-    val head = h
-    val tail = t
+    lazy val head = h
+    lazy val tail = t
     Cons(() => head, () =>tail)
   }
 
   def empty[A]: Stream[A] = Empty
 
   def apply[A](as: A*): Stream[A] =
-    if(as.isEmpty) Empty
+    if(as.isEmpty) empty
     else cons(as.head, apply(as.tail: _*))
 
 
@@ -173,11 +216,39 @@ object Stream {
    * Write a function fibs that generates the infinite stream of
    * Fibonacci numbers: 0, 1, 1, 2, 3, 5, 8, and so on.
    */
-  def fibs: Stream[Int] = {
+  val fibs: Stream[Int] = {
     def go(f0: Int, f1: Int): Stream[Int] = {
       Cons(() => f0, () => go(f1, f0 + f1))
     }
-
     go(0, 1)
   }
+
+  /**
+   * Exercise 5.11
+   * Write a more general stream-building function called unfold. It takes an initial state, and a function
+   * for producing both the next state and the next value in the generated stream.
+   */
+  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] =
+//    f(z) match {
+//      case Some((h,s)) => cons(h, unfold(s)(f))
+//      case None => empty
+//    }
+//    // or with fold
+//    f(z).fold(empty[A])((p: (A,S)) => cons(p._1,unfold(p._2)(f)))
+//    // or with map
+    f(z).map((p: (A,S)) => cons(p._1,unfold(p._2)(f))).getOrElse(empty[A])
+
+  /**
+   * Exercise 5.12
+   * Write fibs, from, constant, and ones in terms of unfold
+   */
+  val fibsWithUnfold: Stream[Int] =
+    unfold((0,1)){ case (f0, f1) => Some((f0, (f1, f0 + f1))) }
+
+  def fromWithUnfold(n: Int): Stream[Int] =
+    unfold(n)( n => Some(n, n+1) )
+
+  def constantWithUnfold[A](a: A): Stream[A] =
+    unfold(a)( a => Some(a, a) )
+
 }
