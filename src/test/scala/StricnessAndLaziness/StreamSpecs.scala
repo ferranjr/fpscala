@@ -31,6 +31,10 @@ class StreamSpecs extends Specification {
           takeWhile $e513_3
           zipWith $e513_4
           zipAll $e513_5
+        Stream startWith $e514_1
+        Stream startWith $e514_2
+        Stream tails $e515
+        Stream hasSubsequence ${hasSubsequenceTest && hasSubsequenceTest2}
      """
 
   def e51   = Stream( 1, 2, 3).toList must equalTo(List(1,2,3))
@@ -72,4 +76,14 @@ class StreamSpecs extends Specification {
   def e513_3 = Stream(1,2,3,4,5,6).takeWhileWithUnfold(_ <= 2).toList must equalTo(List(1,2))
   def e513_4 = Stream(1,2,3).zipWithWithUnfold(Stream(1,2,3))(_+_).toList must equalTo(List(2,4,6))
   def e513_5 = Stream(1,2).zipAll(Stream(1,2,3)).toList must equalTo(List((Some(1), Some(1)),(Some(2), Some(2)), (None, Some(3))))
+
+  def e514_1 = Stream(1,2,3,4,5).startsWith(Stream(1,2,3)) must equalTo(true)
+  def e514_2 = Stream(1,2,3,4,5).startsWith(Stream(5,2,3)) must equalTo(false)
+
+  def e515 = Stream(1,2,3).tails.toList.map(_.toList) must equalTo(List(List(1,2,3),List(2,3),List(3),List()))
+
+  def hasSubsequenceTest = Stream(1,2,3,4,5).hasSubsequence(Stream(3,4,5)) must equalTo(true)
+  def hasSubsequenceTest2 = Stream(1,2,3,5).hasSubsequence(Stream(3,4,5)) must equalTo(false)
+
+  def e516 = Stream(1,2,3).scanRight(0)(_ + _).toList must equalTo(List(6,5,3,0))
 }

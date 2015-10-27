@@ -170,6 +170,49 @@ sealed trait Stream[+A]{
         Some((None, Some(h2())), (Stream.empty, t2()))
       case _ => None
     }
+
+
+  /**
+   * Exercise 5.14
+   * Hard: Implement startsWith using functions you’ve written. It should check if one Stream is a prefix of another.
+   * For instance, Stream(1,2,3) startsWith Stream(1,2) would be true.
+   */
+  def startsWith[B](s: Stream[B]): Boolean =
+    (this, s) match {
+      case (_, Empty) => true
+      case (Cons(h1,t1), Cons(h2,t2)) if h1() == h2() => t1().startsWith(t2())
+      case _ => false
+    }
+
+  /**
+   * Exercise 5.15
+   * Implement tails using unfold. For a given Stream, tails returns the Stream of suffixes of the input sequence,
+   * starting with the original Stream. For example, given Stream(1,2,3), it would return Stream(Stream(1,2,3), Stream(2,3), Stream(3), Stream()).
+   */
+  def tails: Stream[Stream[A]] =
+    Stream.unfold(this){
+      case Empty => None
+      case s:Stream[A] => Some((s, s drop 1))
+    } append Stream(Empty)
+
+
+  def hasSubsequence[B](s: Stream[B]): Boolean =
+    tails exists (_ startsWith s)
+
+  /**
+   * Exercise 5.16
+   * Hard: Generalize tails to the function scanRight, which is like a foldRight that returns a stream of the
+   * intermediate results. For example:
+   *   scala> Stream(1,2,3).scanRight(0)(_ + _).toList
+   *   res0: List[Int] = List(6,5,3,0)
+   * This example should be equivalent to the expression List(1+2+3+0, 2+3+0, 3+0, 0). Your function should reuse intermediate results so that traversing a Stream with n elements always takes time linear in n. Can it be implemented using unfold? How, or why not? Could it be implemented using another function we’ve written?
+   */
+  def scanRight[B](z: B)(f: (A, => B) => B): Stream[B] =
+    foldRight((z, Stream(z)))((a, p0) => {
+      lazy val p1 = p0
+      val b2 = f(a, p1._1)
+      (b2, Stream.cons(b2, p1._2))
+    })._2
 }
 case object Empty extends Stream[Nothing]
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
