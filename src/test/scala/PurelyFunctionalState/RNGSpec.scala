@@ -17,6 +17,9 @@ class RNGSpec extends Specification {
 
       RollDie
         should not give us a 0 $rollDie
+
+      Candy Machine
+        should work properly ${e611a && e611b}
     """
 
   def e61 = RNG.nonNegativeInt(SimpleRNG(42))._1 must equalTo(16159453)
@@ -29,5 +32,19 @@ class RNGSpec extends Specification {
   def e65 = RNG.double2(SimpleRNG(42))._1 must equalTo(0.007524831686168909)
 
   def rollDie = RNG.rollDie(SimpleRNG(5))._1 must equalTo(1)
+
+
+  val initialState = Machine(locked = true, 10, 0)
+
+  def e611a =
+    Candy.simulateMachine(
+      List(Coin, Knob, Coin, Knob, Coin, Knob, Knob, Knob, Knob, Coin, Knob, Coin, Knob)
+    ).run(initialState)._1 must equalTo((5, 5))
+
+  def e611b =
+    Candy.simulateMachine(
+      List(Coin, Knob, Coin, Knob, Coin, Knob, Coin, Coin, Knob, Coin, Knob, Coin, Knob, Coin, Knob, Coin, Knob,
+        Coin, Knob, Coin, Knob, Coin, Knob, Coin, Knob, Coin, Knob, Coin, Knob, Coin, Knob)
+    ).run(initialState)._1 must equalTo((10, 0))
 
 }
