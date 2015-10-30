@@ -278,5 +278,3 @@ object Candy {
     } yield (s.coins, s.candies)
 
 }
-
-

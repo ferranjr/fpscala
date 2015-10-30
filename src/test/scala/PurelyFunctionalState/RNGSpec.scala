@@ -33,7 +33,6 @@ class RNGSpec extends Specification {
 
   def rollDie = RNG.rollDie(SimpleRNG(5))._1 must equalTo(1)
 
-
   val initialState = Machine(locked = true, 10, 0)
 
   def e611a =
