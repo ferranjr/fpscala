@@ -221,12 +221,12 @@ object State {
    */
 
   def modify[S](f: S => S): State[S, Unit] = for {
-    s <- get // Gets the current state and assigns it to `s`.
-    _ <- set(f(s)) // Sets the new state to `f` applied to `s`.
+    s <- get        // Gets the current state and assigns it to `s`.
+    _ <- set(f(s))  // Sets the new state to `f` applied to `s`.
   } yield ()
 
-  def get[S]: State[S, S] = State(s => (s, s))
-  def set[S](s: S): State[S, Unit] = State(_ => ((), s))
+  def get[S]: State[S, S]           = State(s => (s, s))
+  def set[S](s: S): State[S, Unit]  = State(_ => ((), s))
 }
 
 
